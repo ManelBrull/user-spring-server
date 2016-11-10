@@ -1,4 +1,4 @@
-package com.goodvideotutorials.spring;
+package com.mbrull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
