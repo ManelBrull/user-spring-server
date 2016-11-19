@@ -202,8 +202,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void changePassword(ChangePasswordForm changePasswordForm, BindingResult result) {
         logger.info("User service change password");
+
+        long loggedInUserId = UserUtil.getSessionUser().getId();
+        User user = userRepository.findOne(loggedInUserId);
+        
+        MyUtil.validate(user.getId() == loggedInUserId, "noPermissions");
+        
+        if(!passwordEncoder.matches(changePasswordForm.getOldPassword(), user.getPassword())){
+            result.rejectValue("oldPassword", "currentPasswordDoNotMatch");
+        }
+        
+        user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPassword()));
+        userRepository.save(user);
+        
     }
     
     
