@@ -5,30 +5,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.mbrull.dto.ChangePasswordForm;
 import com.mbrull.dto.UserEditForm;
 import com.mbrull.entities.User;
 import com.mbrull.services.UserService;
 import com.mbrull.util.FlashAttributeMyUtils;
+import com.mbrull.validator.ChangePasswordFormValidator;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
+    private final ChangePasswordFormValidator changePasswordFormValidator;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ChangePasswordFormValidator changePasswordFormValidator) {
         this.userService = userService;
+        this.changePasswordFormValidator = changePasswordFormValidator;
     }
+    
+    @InitBinder("changePasswordForm")
+    protected void initChangePaswordFormBinder(WebDataBinder binder) {
+        binder.setValidator(changePasswordFormValidator);
+    }
+
 
     @RequestMapping("/{verificationCode}/verify")
     public String verify(@PathVariable("verificationCode") String verificationCode,
@@ -83,4 +96,29 @@ public class UserController {
 
         return "redirect:/";
     }
+    
+    @RequestMapping(value = "/{userId}/change-password")
+    public String changePassword(@PathVariable("userId") long userId, Model model) {
+        ChangePasswordForm form = new ChangePasswordForm();
+        model.addAttribute(form);
+        return "change-password";
+    }
+    
+    @RequestMapping(value = "/{userId}/change-password", method = RequestMethod.POST)
+    public String changePassword(@PathVariable("userId") long userId,
+            @ModelAttribute("changePasswordForm") @Valid ChangePasswordForm changePasswordForm, BindingResult result,
+            RedirectAttributes redirectAttributes, HttpServletRequest request) throws ServletException {
+
+        userService.changePassword(changePasswordForm, result);
+        
+        if (result.hasErrors()) {
+            return "change-password";
+        }
+
+        FlashAttributeMyUtils.flashSuccess(redirectAttributes, "changePasswordSuccessful");
+        
+        return "redirect:/users/"+userId;
+    }    
+    
+    
 }

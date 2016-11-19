@@ -19,6 +19,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.validation.BindingResult;
 
+import com.mbrull.dto.ChangePasswordForm;
 import com.mbrull.dto.ForgotPasswordForm;
 import com.mbrull.dto.ResetPasswordForm;
 import com.mbrull.dto.SignupForm;
@@ -198,7 +199,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (loggedIn.isAdmin())
             user.setRoles(userEditForm.getRoles());
         userRepository.save(user);
-
     }
+
+    @Override
+    public void changePassword(ChangePasswordForm changePasswordForm, BindingResult result) {
+        logger.info("User service change password");
+    }
+    
+    
 
 }

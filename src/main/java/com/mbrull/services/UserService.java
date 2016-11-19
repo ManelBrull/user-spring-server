@@ -2,6 +2,7 @@ package com.mbrull.services;
 
 import org.springframework.validation.BindingResult;
 
+import com.mbrull.dto.ChangePasswordForm;
 import com.mbrull.dto.ForgotPasswordForm;
 import com.mbrull.dto.ResetPasswordForm;
 import com.mbrull.dto.SignupForm;
@@ -23,5 +24,7 @@ public interface UserService {
 	public User findOne(long userId);
 
 	public void update(long userId, UserEditForm userEditForm);
+
+    public void changePassword(ChangePasswordForm changePasswordForm, BindingResult result);
 	
 }
