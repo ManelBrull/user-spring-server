@@ -66,7 +66,7 @@
 							<li>
 								<a href="/login"> 
 									<span class="glyphicon glyphicon-log-in"></span>
-									Sign in 
+									Log in
 								</a>
 							</li>
 						</sec:authorize>
