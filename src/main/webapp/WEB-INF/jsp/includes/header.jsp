@@ -14,6 +14,9 @@
 
 <!-- Bootstrap -->
 <link rel='stylesheet' href='/webjars/bootstrap/3.1.1/css/bootstrap.min.css'/>
+<!-- JQuery -->
+
+<!-- Css styles -->
 <link rel='stylesheet' href='/public/assets/styles/main.css'/>
 </head>
 <body>

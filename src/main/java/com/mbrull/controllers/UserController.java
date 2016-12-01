@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,6 +41,10 @@ public class UserController {
         binder.setValidator(changePasswordFormValidator);
     }
 
+    private String getRedirectUrlToUserProfile(long userId) {
+        return "redirect:/users/"+userId;
+    }
+    
 
     @RequestMapping("/{verificationCode}/verify")
     public String verify(@PathVariable("verificationCode") String verificationCode,
@@ -92,9 +95,8 @@ public class UserController {
 
         userService.update(userId, userEditForm);
         FlashAttributeMyUtils.flashSuccess(redirectAttributes, "editSuccessful");
-        request.logout();
 
-        return "redirect:/";
+        return getRedirectUrlToUserProfile(userId);
     }
     
     @RequestMapping(value = "/{userId}/change-password")
@@ -117,7 +119,7 @@ public class UserController {
 
         FlashAttributeMyUtils.flashSuccess(redirectAttributes, "changePasswordSuccessful");
         
-        return "redirect:/users/"+userId;
+        return getRedirectUrlToUserProfile(userId);
     }    
     
     
