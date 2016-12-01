@@ -95,7 +95,7 @@ public class UserController {
 
         userService.update(userId, userEditForm);
         FlashAttributeMyUtils.flashSuccess(redirectAttributes, "editSuccessful");
-
+        
         return getRedirectUrlToUserProfile(userId);
     }
     

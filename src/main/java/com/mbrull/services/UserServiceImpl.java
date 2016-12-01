@@ -199,6 +199,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (loggedIn.isAdmin())
             user.setRoles(userEditForm.getRoles());
         userRepository.save(user);
+        loggedIn.setName(userEditForm.getName());
     }
 
     @Override
