@@ -61,24 +61,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.getRoles().add(Role.UNVERIFIED);
         user.setVerificationCode(RandomStringUtils.randomAlphanumeric(16));
         userRepository.save(user);
-
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
-                String verificationLink = PropertiesMyUtils.hostUri() + "/users/" + user.getVerificationCode()
-                        + "/verify";
-                try {
-                    mailSender.send(
-                            user.getEmail(), 
-                            MyUtil.getMessage("verifySubject"),
-                            MyUtil.getMessage("verifyEmail", verificationLink));
-                            
-                    logger.info("Verification emails sent to: " + user.getEmail() + " queued.");
-                } catch (MessagingException e) {
-                    logger.error(ExceptionUtils.getStackTrace(e));
-                }
+                executeAfterSignupCommit(user);
             }
         });
+    }
+    
+    private void executeAfterSignupCommit(final User user) {
+        String verificationLink = PropertiesMyUtils.hostUri() + "/users/" + user.getVerificationCode() + "/verify";
+        try {
+            mailSender.send(user.getEmail(), MyUtil.getMessage("verifySubject"),
+                    MyUtil.getMessage("verifyEmail", verificationLink));
+
+            logger.info("Verification emails sent to: " + user.getEmail() + " queued.");
+        } catch (MessagingException e) {
+            logger.error(ExceptionUtils.getStackTrace(e));
+        }
     }
 
     @Override
